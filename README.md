@@ -8,9 +8,9 @@ You need to have [docker](https://docker.com/) installed.
 
 ## Building
 
-    docker build -t edadmin .
+    docker build -t linkedopendataswiss .
     
 ## Running
 
-    docker run --rm -p 80:80 edadmin
+    docker run --rm -p 80:80 linkedopendataswiss
     
