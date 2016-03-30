@@ -8,9 +8,9 @@ You need to have [docker](https://docker.com/) installed.
 
 ## Building
 
-    docker build -t linkedopendataswiss .
+    docker build -t  zazuko/linked.opendata.swiss .
     
 ## Running
 
-    docker run --rm -p 80:80 linkedopendataswiss
+    docker run --rm -p 80:80  zazuko/linked.opendata.swiss
     
