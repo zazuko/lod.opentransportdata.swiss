@@ -8,7 +8,7 @@ var
 
 
 var buildQuery = function (iri) {
-  return 'DEFINE sql:describe-mode "SPO" DESCRIBE <' + iri + '>';
+  return 'DEFINE sql:describe-mode "CBD" DESCRIBE <' + iri + '>';
 };
 
 var buildExistsQuery = function (iri) {
