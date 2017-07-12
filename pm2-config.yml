@@ -1,4 +1,4 @@
 apps:
   - script   : ./node_modules/.bin/trifid
-    name     : 'lodtransport'
-    args     : '--config config.transport.json'
+    name     : 'opentransportdata'
+    args     : '--config config.json'
