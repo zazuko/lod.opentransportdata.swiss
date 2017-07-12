@@ -9,6 +9,6 @@
   "devDependencies": {},
   "license": "UNLICENSED",
   "scripts": {
-    "start": "trifid --config config.transport.json"
+    "start": "trifid --config config.json"
   }
 }
