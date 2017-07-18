@@ -1,10 +1,9 @@
-FROM node:6.10-onbuild
+FROM zazuko/trifid:1.7.8
 
 RUN npm install pm2 -g
 
-ADD config.json /usr/src/app/
-ADD pm2-config.yml /usr/src/app
-#ADD data /usr/src/app/data
+ADD package.json /usr/src/app/
 
-CMD ["pm2-docker", "pm2-config.yml"]
+CMD pm2-docker start npm -- start
+
 EXPOSE 8080
