@@ -1,4 +1,4 @@
-FROM zazuko/trifid:1.7.9
+FROM zazuko/trifid:1.8.0
 
 ADD package.json /usr/src/app/
 ADD config.json /usr/src/app/
