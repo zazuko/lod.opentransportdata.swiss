@@ -14,7 +14,7 @@
     }
   },
   "staticViews": {
-    "/": "cwd:views/index.html"
+    "/": "cwd:views/home.html"
   },
   "handler": {
     "options": {
