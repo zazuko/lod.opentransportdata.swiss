@@ -1,9 +1,6 @@
-FROM zazuko/trifid:1.8.3
+FROM node:6-onbuild
 
-ADD package.json /usr/src/app/
-ADD config.json /usr/src/app/
-ADD views/* /usr/src/app/views/
-
+RUN npm install pm2 -g
 CMD pm2-docker start npm -- start
 
 EXPOSE 8080

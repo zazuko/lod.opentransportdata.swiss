@@ -139,6 +139,7 @@ WHERE
                 \${filters}
             }
          }
+      ORDER BY ?sub
       OFFSET \${offset}
       LIMIT \${limit}
     }
@@ -161,17 +162,22 @@ didokRenderer.renderResult = function (page, subject) {
   var titleString = subject.toString()
   if (page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift()) { titleString = page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift().object.toString() }
 
+  var alternateName = '&nbsp;'
+  if (page.match(subject, 'http://schema.org/alternateName').toArray().shift()) { alternateName = page.match(subject, 'http://schema.org/alternateName').toArray().shift().object.toString() }
 
-  var titlePrefix = ''
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Bus').toArray().shift()) { titlePrefix = "Bus Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Train').toArray().shift()) { titlePrefix = "Train Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Tram').toArray().shift()) { titlePrefix = "Tram Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Funicular').toArray().shift()) { titlePrefix = "Funicular Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Ship').toArray().shift()) { titlePrefix = "Ship Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/RackRailway').toArray().shift()) { titlePrefix = "RackRailway Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Elevator').toArray().shift()) { titlePrefix = "Elevator Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Subway').toArray().shift()) { titlePrefix = "Subway Station" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/ArialLift').toArray().shift()) { titlePrefix = "Arial Lift Station" }
+  var municipality = ''
+  if (page.match(subject, 'https://gont.ch/municipality').toArray().shift()) { municipality = page.match(subject, 'https://gont.ch/municipality').toArray().shift().object.toString() }
+
+
+  var stationtype = ''
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Bus').toArray().shift()) { stationtype = "bus" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Train').toArray().shift()) { stationtype = "train" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Tram').toArray().shift()) { stationtype = "tram" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Funicular').toArray().shift()) { stationtype = "funicular" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Ship').toArray().shift()) { stationtype = "ship" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/RackRailway').toArray().shift()) { stationtype = "rackrailway" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Elevator').toArray().shift()) { stationtype = "elevator" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/ArialLift').toArray().shift()) { stationtype = "ariallift" }
 
 
   var didokNumber = page.match(subject, 'http://purl.org/dc/terms/identifier').toArray().shift()
@@ -181,18 +187,27 @@ didokRenderer.renderResult = function (page, subject) {
   var elevationT = page.match(subject, 'http://schema.org/elevation').toArray().shift()
   if (elevationT) {elevation = elevationT.object.toString()}
 
-  rendering = '<div class="zack-result"><div class="col-md-6 col-sm-6 col-xs-6"><article class="search-result">' +
-              '<a href="' + link + '"><span>' + titlePrefix + '</span>' +
-              '<h4>' + titleString + '</h4></a>' +
-              '</div>' +
-              '<div class="result-detail col-md-3 hidden-sm hidden-xs">' +
-              '<span>Didok #' + didokNumberString + '</span>' +
-              '</div>' +
-              '<div class="result-detail col-md-3 col-sm-6 col-xs-6">' +
-              'Elevation: ' + elevation + 'm' +
-              '</div>' +
-
-              '</article></div>'
+  rendering = '<div class="zack-result">' +
+              '  <article class="search-result">' +
+              '  <div class="col-md-1 col-sm-2 col-xs-3">' +
+              '    <img style="width: 66px; height: 66px; margin-top: 2px; image-rendering: crisp-edges;" src="/' + stationtype + '.png">' +
+              '  </div>' +
+              '  <div class="col-md-5 col-sm-6 col-xs-9">' +
+              '    <a href="' + link + '">' +
+              '      <span>' + alternateName + '</span>' +
+              '      <h4 style="white-space:nowrap;">' + titleString + '</h4>' +
+              '    </a>' +
+              '  </div>' +
+              '  <div class="col-md-3 hidden-sm hidden-xs">' +
+              '    <span>Didok #' + didokNumberString + '</span><br>' +
+              '    <span><a href="' + municipality + '" target="_blank">show Municipality</a></span>' +
+              '    <span>' + '</span>' +
+              '  </div>' +
+              '  <div class="col-md-3 col-sm-4 hidden-xs">' +
+              '    <span>Elevation: ' + elevation + 'm</span><br>' +
+              '  </div>' +
+              '  </article>' +
+              '</div>'
 
   return rendering
 }
