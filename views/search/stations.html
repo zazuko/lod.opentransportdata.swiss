@@ -177,7 +177,7 @@ didokRenderer.renderResult = function (page, subject) {
   if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Ship').toArray().shift()) { stationtype = "ship" }
   if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/RackRailway').toArray().shift()) { stationtype = "rackrailway" }
   if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Elevator').toArray().shift()) { stationtype = "elevator" }
-  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/ArialLift').toArray().shift()) { stationtype = "ariallift" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/AerialLift').toArray().shift()) { stationtype = "aeriallift" }
 
 
   var didokNumber = page.match(subject, 'http://purl.org/dc/terms/identifier').toArray().shift()
