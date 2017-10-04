@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "trifid": "^1.8.3"
+    "trifid": "^1.10.1",
+    "zack-search": "zazuko/zack-search"
   },
   "devDependencies": {},
   "license": "UNLICENSED",
   "scripts": {
-    "start": "trifid --config config.json"
+    "start": "trifid --config config.json",
+    "start-local": "trifid --config config.local.json"
   }
 }

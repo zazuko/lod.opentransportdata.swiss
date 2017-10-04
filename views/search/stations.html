@@ -1,0 +1,237 @@
+${set('moduleAbout','<a href="//github.com/zazuko/zack-search" target="_blank">Zack Search</a>')}
+<!DOCTYPE html>
+<html>
+<head>
+
+${include('cwd:views/header.html')}
+   <link rel="stylesheet" href="/search/zack.css">
+
+</head>
+<body>
+
+${include('cwd:views/navigation.html')}
+
+  <div class="container">
+    <div class="col-sm-12 col-md-12">
+      <div class="row">
+        <div class="zack-query-box">
+           <form action="javascript:document.getElementById('query').blur();">
+               <div class="form-horizontal">
+                   <div class="form-group">
+                       <div class="col-sm-12">
+                           <input autofocus id="query" class="zack-big form-control" type="text" placeholder="🔍    Searchterm">
+                           <br>
+                       </div>
+                   </div>
+               </div>
+           </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-12">
+     <div class="row">
+      <div id="filter-container" class="zack-filter">
+      </div>
+     </div>
+     <div class="row">
+      <div class="zack-content">
+       <div class="zack-result-list">
+        <div id="scrollArea" class="clusterize-scroll">
+         <div id="contentArea" class="clusterize-content">
+          <div class="clusterize-no-data">Loading data…</div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="row">
+      <div class="zack-overview">
+       <div class="col-sm-3">
+        <span id="count" class="zack-count zack-big"></span> <i>Results</i>
+       </div>
+      </div>
+     </div>
+
+${include('cwd:views/footer.html')}
+
+ </div>
+
+<script src="zack.min.js"></script>
+
+<script id="adminMeta" type="text/sparql">
+PREFIX  :     <http://voc.zazuko.com/zack#>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  owl: <http://www.w3.org/2002/07/owl#>
+PREFIX  text: <http://jena.apache.org/text#>
+PREFIX  wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX  gont: <https://gont.ch/>
+
+CONSTRUCT
+  {
+    _:c0 :numberOfResults ?count .
+    _:c0 :queryStart "0" .
+    _:c0 :queryEnd "0" .
+  }
+WHERE
+  {
+    { SELECT (COUNT(DISTINCT ?sub) AS ?count) WHERE
+        {
+            SERVICE <https://query.wikidata.org/sparql> {
+                ?wikidata wdt:P771 ?smunid .
+                    \${textmatch}
+                }
+
+                GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
+                    ?municipality owl:sameAs ?wikidata .
+                }
+
+                GRAPH <https://linked.opendata.swiss/graph/FOT/didok> {
+                    ?sub gont:municipality ?municipality .
+                    \${filters}
+                }
+            }
+        }
+      }
+</script>
+
+<script id="adminResultSet" type="text/sparql">
+PREFIX  :     <http://voc.zazuko.com/zack#>
+PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX  skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX  rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  owl: <http://www.w3.org/2002/07/owl#>
+PREFIX  text: <http://jena.apache.org/text#>
+PREFIX  wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX  gont: <https://gont.ch/>
+
+CONSTRUCT
+  {
+    :query :result ?sub .
+    ?sub rdf:type :resultItem .
+    ?sub ?pred ?obj .
+  }
+WHERE
+  {
+    GRAPH <https://linked.opendata.swiss/graph/FOT/didok>
+    {
+        ?sub ?pred ?obj .
+
+
+  { SELECT DISTINCT ?sub WHERE
+         {
+            SERVICE <https://query.wikidata.org/sparql> {
+                ?wikidata wdt:P771 ?smunid .
+                \${textmatch}
+            }
+
+            GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
+                ?municipality owl:sameAs ?wikidata .
+            }
+
+            GRAPH <https://linked.opendata.swiss/graph/FOT/didok> {
+                ?sub gont:municipality ?municipality .
+                ?sub ?pred ?obj .
+                \${filters}
+            }
+         }
+      OFFSET \${offset}
+      LIMIT \${limit}
+    }
+    }
+  }
+</script>
+
+
+<script>
+
+var didokRenderer = {}
+
+didokRenderer.init = function (metadata) {
+}
+
+didokRenderer.renderResult = function (page, subject) {
+  var rendering = ''
+
+  var link = subject.toString()
+  var titleString = subject.toString()
+  if (page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift()) { titleString = page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift().object.toString() }
+
+
+  var titlePrefix = ''
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Bus').toArray().shift()) { titlePrefix = "Bus Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Train').toArray().shift()) { titlePrefix = "Train Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Tram').toArray().shift()) { titlePrefix = "Tram Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Funicular').toArray().shift()) { titlePrefix = "Funicular Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Ship').toArray().shift()) { titlePrefix = "Ship Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/RackRailway').toArray().shift()) { titlePrefix = "RackRailway Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Elevator').toArray().shift()) { titlePrefix = "Elevator Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/Subway').toArray().shift()) { titlePrefix = "Subway Station" }
+  if (page.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'http://lod.opentransportdata.swiss/stationtype/ArialLift').toArray().shift()) { titlePrefix = "Arial Lift Station" }
+
+
+  var didokNumber = page.match(subject, 'http://purl.org/dc/terms/identifier').toArray().shift()
+  if (didokNumber) {var didokNumberString = didokNumber.object.toString()}
+
+  var elevation = ''
+  var elevationT = page.match(subject, 'http://schema.org/elevation').toArray().shift()
+  if (elevationT) {elevation = elevationT.object.toString()}
+
+  rendering = '<div class="zack-result"><div class="col-md-6 col-sm-6 col-xs-6"><article class="search-result">' +
+              '<a href="' + link + '"><span>' + titlePrefix + '</span>' +
+              '<h4>' + titleString + '</h4></a>' +
+              '</div>' +
+              '<div class="result-detail col-md-3 hidden-sm hidden-xs">' +
+              '<span>Didok #' + didokNumberString + '</span>' +
+              '</div>' +
+              '<div class="result-detail col-md-3 col-sm-6 col-xs-6">' +
+              'Elevation: ' + elevation + 'm' +
+              '</div>' +
+
+              '</article></div>'
+
+  return rendering
+}
+
+didokRenderer.postRender = function () {
+}
+
+  var options = {
+    endpointUrl: '/query',
+    filterContainer: 'filter-container',
+    resultTypes: ['http://schema.org/CivicStructure'],
+    resultList: {
+      renderer: didokRenderer,
+      pageSize: 20,
+      preload: 80
+    },
+    queries: {
+      adminMeta: document.getElementById("adminMeta").innerHTML ,
+      adminFulltextPart: '?wikidata <http://www.w3.org/2000/01/rdf-schema#label> ?name. FILTER( CONTAINS(LCASE(?name), LCASE("\${searchString}")))',
+      adminResultSet: document.getElementById("adminResultSet").innerHTML
+    },
+    endpoints: {
+      '/query': {
+        queries: {
+          search: 'adminResultSet',
+          count: 'adminMeta',
+          textmatch: 'adminFulltextPart'
+        }
+      }
+    },
+    plugins: []
+  }
+
+  window.app = new Zack(options)
+
+  window.app.init().catch(function (err) {
+    console.error(err)
+  })
+
+</script>
+</body>
+</html>
