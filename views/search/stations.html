@@ -190,7 +190,7 @@ didokRenderer.renderResult = function (page, subject) {
   rendering = '<div class="zack-result">' +
               '  <article class="search-result">' +
               '  <div class="col-md-1 col-sm-2 col-xs-3">' +
-              '    <img style="width: 66px; height: 66px; margin-top: 2px; image-rendering: crisp-edges;" src="/' + stationtype + '.png">' +
+              '    <img style="width: 66px; height: 66px; margin-top: 2px; image-rendering: crisp-edges;"' + (stationtype ? ' src="/' + stationtype + '.png"' : '') + '>' +
               '  </div>' +
               '  <div class="col-md-5 col-sm-6 col-xs-9">' +
               '    <a href="' + link + '">' +
