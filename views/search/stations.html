@@ -4,7 +4,7 @@ ${set('moduleAbout','<a href="//github.com/zazuko/zack-search" target="_blank">Z
 <head>
 
 ${include('cwd:views/header.html')}
-   <link rel="stylesheet" href="/search/zack.css">
+   <link rel="stylesheet" href="/zack-search/zack.css">
 
 </head>
 <body>
@@ -57,9 +57,9 @@ ${include('cwd:views/footer.html')}
 
  </div>
 
-<script src="/search/zack.min.js"></script>
+<script src="/zack-search/zack.min.js"></script>
 
-<script id="adminMeta" type="text/sparql">
+<script id="opentransportdataMeta" type="text/sparql">
 PREFIX  :     <http://voc.zazuko.com/zack#>
 PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
@@ -80,17 +80,17 @@ WHERE
   {
     { SELECT (COUNT(DISTINCT ?sub) AS ?count) WHERE
         {
-            SERVICE <https://query.wikidata.org/sparql> {
-                ?wikidata wdt:P771 ?smunid .
-                    \${textmatch}
-                }
+#            SERVICE <https://query.wikidata.org/sparql> {
+#                ?wikidata wdt:P771 ?smunid .
+#                }
 
-                GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
-                    ?municipality owl:sameAs ?wikidata .
-                }
+#                GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
+#                    ?municipality owl:sameAs ?wikidata .
+#                }
 
                 GRAPH <https://linked.opendata.swiss/graph/FOT/didok> {
                     ?sub gont:municipality ?municipality .
+                    \${textmatch}
                     \${filters}
                 }
             }
@@ -98,7 +98,7 @@ WHERE
       }
 </script>
 
-<script id="adminResultSet" type="text/sparql">
+<script id="opentransportdataResultSet" type="text/sparql">
 PREFIX  :     <http://voc.zazuko.com/zack#>
 PREFIX  rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX  xsd:  <http://www.w3.org/2001/XMLSchema#>
@@ -124,18 +124,18 @@ WHERE
 
   { SELECT DISTINCT ?sub WHERE
          {
-            SERVICE <https://query.wikidata.org/sparql> {
-                ?wikidata wdt:P771 ?smunid .
-                \${textmatch}
-            }
+#            SERVICE <https://query.wikidata.org/sparql> {
+#                ?wikidata wdt:P771 ?smunid .
+#            }
 
-            GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
-                ?municipality owl:sameAs ?wikidata .
-            }
+#            GRAPH <https://linked.opendata.swiss/graph/eCH-0071> {
+#                ?municipality owl:sameAs ?wikidata .
+#            }
 
             GRAPH <https://linked.opendata.swiss/graph/FOT/didok> {
                 ?sub gont:municipality ?municipality .
                 ?sub ?pred ?obj .
+                \${textmatch}
                 \${filters}
             }
          }
@@ -225,16 +225,17 @@ didokRenderer.postRender = function () {
       preload: 80
     },
     queries: {
-      adminMeta: document.getElementById("adminMeta").innerHTML ,
-      adminFulltextPart: '?wikidata <http://www.w3.org/2000/01/rdf-schema#label> ?name. FILTER( CONTAINS(LCASE(?name), LCASE("\${searchString}")))',
-      adminResultSet: document.getElementById("adminResultSet").innerHTML
+      opentransportdataMeta: document.getElementById("opentransportdataMeta").innerHTML ,
+      WIKIopentransportdataFulltextPart: '?wikidata <http://www.w3.org/2000/01/rdf-schema#label> ?name. FILTER( CONTAINS(LCASE(?name), LCASE("\${searchString}")))',
+      opentransportdataFulltextPart: '?sub <http://www.w3.org/2000/01/rdf-schema#label> ?name. FILTER( CONTAINS(LCASE(?name), LCASE("\${searchString}")))',
+      opentransportdataResultSet: document.getElementById("opentransportdataResultSet").innerHTML
     },
     endpoints: {
       '/query': {
         queries: {
-          search: 'adminResultSet',
-          count: 'adminMeta',
-          textmatch: 'adminFulltextPart'
+          search: 'opentransportdataResultSet',
+          count: 'opentransportdataMeta',
+          textmatch: 'opentransportdataFulltextPart'
         }
       }
     },

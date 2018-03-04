@@ -1,15 +1,14 @@
 {
   "baseConfig": "trifid:config-sparql.json",
-  "listener": {
-       "port": 8080
+  "sparqlEndpointUrl": "https://lindas-data.ch:8443/lindas/query",
+  "sparqlEndpointAuthentication": {
+    "user": "public",
+    "password": "public"
   },
-  "sparqlEndpointUrl": "http://swiss.resc.info:3030/lindas/query",
   "sparqlProxy": {
-    "options": {
-      "queryOperation": "postQueryUrlencoded",
-      "authentication": {
-        "user": "admin",
-        "password": "uB2l6rEW4CgXG4U"
+    "default": {
+      "options": {
+        "queryOperation": "postQueryUrlencoded"
       }
     }
   },
@@ -22,30 +21,19 @@
       "path": "/",
       "folder": "cwd:public"
     },
-    "rendererFiles": {
-      "path": "/",
-      "folder": "renderer:public"
-    },
     "zackFiles": {
-      "path": "/search",
+      "path": "/zack-search/",
       "folder":  "cwd:node_modules/zack-search/dist"
     }
   },
-  "renderer": {
-    "module": "trifid-renderer-simple",
-    "template": "renderer:views/index.html",
-    "templateError": "renderer:views/error.html"
-  },
   "handler": {
-    "options": {
-      "authentication": {
-        "user": "admin",
-        "password": "uB2l6rEW4CgXG4U"
-      },
-      "resourceExistsQuery": "ASK {  GRAPH ?g{ <${iri}> ?p ?o }}",
-      "resourceGraphQuery": "DESCRIBE  <${iri}> ",
-      "containerExistsQuery": "ASK { GRAPH ?g{ ?s a ?o. FILTER REGEX(STR(?s), \"^${iri}\") }}",
-      "containerGraphQuery": "CONSTRUCT { ?s a ?o. } WHERE { GRAPH ?g{  ?s a ?o. FILTER REGEX(STR(?s), \"^${iri}\") }}"
+    "root": {
+      "options": {
+        "resourceExistsQuery": "ASK {  GRAPH ?g{ <${iri}> ?p ?o }}",
+        "resourceGraphQuery": "DESCRIBE  <${iri}> ",
+        "containerExistsQuery": "ASK { GRAPH ?g{ ?s a ?o. FILTER REGEX(STR(?s), \"^${iri}\") }}",
+        "containerGraphQuery": "CONSTRUCT { ?s a ?o. } WHERE { GRAPH ?g{  ?s a ?o. FILTER REGEX(STR(?s), \"^${iri}\") }}"
+      }
     }
   }
 }
