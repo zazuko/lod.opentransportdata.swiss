@@ -21,7 +21,7 @@ deploy:
   stage: deploy
   environment:
     name: production
-    url: https://gont.ch
+    url: https://lod.opentransportdata.swiss
   before_script:
     - wget -qO /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.15.1/bin/linux/amd64/kubectl
     - wget -qO /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.0.2/kustomize_3.0.2_linux_amd64
