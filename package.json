@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "npm": "^6.13.4",
-    "trifid": "^2.3.1",
+    "trifid": "^2.3.3",
     "zack-search": "github:zazuko/zack-search#dfac9a658b39a64337474dbbe062656f3ea8e3da"
   },
   "devDependencies": {},
