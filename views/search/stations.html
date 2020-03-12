@@ -57,7 +57,7 @@ ${include('cwd:views/footer.html')}
 
  </div>
 
-<script src="/zack-search/zack.min.js"></script>
+<script src="/zack-search/zack.js"></script>
 
 <script id="opentransportdataMeta" type="text/sparql">
 PREFIX  :     <http://voc.zazuko.com/zack#>
@@ -158,15 +158,15 @@ didokRenderer.init = function (metadata) {
 didokRenderer.renderResult = function (page, subject) {
   var rendering = ''
 
-  var link = subject.toString()
-  var titleString = subject.toString()
-  if (page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift()) { titleString = page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift().object.toString() }
+  var link = subject.value
+  var titleString = subject.value
+  if (page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift()) { titleString = page.match(subject, 'http://www.w3.org/2000/01/rdf-schema#label').toArray().shift().object.value }
 
   var alternateName = '&nbsp;'
-  if (page.match(subject, 'http://schema.org/alternateName').toArray().shift()) { alternateName = page.match(subject, 'http://schema.org/alternateName').toArray().shift().object.toString() }
+  if (page.match(subject, 'http://schema.org/alternateName').toArray().shift()) { alternateName = page.match(subject, 'http://schema.org/alternateName').toArray().shift().object.value }
 
   var municipality = ''
-  if (page.match(subject, 'https://gont.ch/municipality').toArray().shift()) { municipality = page.match(subject, 'https://gont.ch/municipality').toArray().shift().object.toString() }
+  if (page.match(subject, 'https://gont.ch/municipality').toArray().shift()) { municipality = page.match(subject, 'https://gont.ch/municipality').toArray().shift().object.value }
 
 
   var stationtype = ''
@@ -181,16 +181,16 @@ didokRenderer.renderResult = function (page, subject) {
 
 
   var didokNumber = page.match(subject, 'http://purl.org/dc/terms/identifier').toArray().shift()
-  if (didokNumber) {var didokNumberString = didokNumber.object.toString()}
+  if (didokNumber) {var didokNumberString = didokNumber.object.value}
 
   var elevation = ''
   var elevationT = page.match(subject, 'http://schema.org/elevation').toArray().shift()
-  if (elevationT) {elevation = elevationT.object.toString()}
+  if (elevationT) {elevation = elevationT.object.value}
 
   rendering = '<div class="zack-result">' +
               '  <article class="search-result">' +
               '  <div class="col-md-1 col-sm-2 col-xs-3">' +
-              '    <img style="width: 66px; height: 66px; margin-top: 2px; image-rendering: crisp-edges;"' + (stationtype ? ' src="/' + stationtype + '.png"' : '') + '>' +
+//              '    <img style="width: 66px; height: 66px; margin-top: 2px; image-rendering: crisp-edges;"' + (stationtype ? ' src="/' + stationtype + '.png"' : '') + '>' +
               '  </div>' +
               '  <div class="col-md-5 col-sm-6 col-xs-9">' +
               '    <a href="' + link + '">' +
